@@ -11,6 +11,9 @@ from pptx import Presentation
 # datetime used to generate current date and time
 from datetime import datetime
 
+# default pptx package path
+defaultPATH = "default.pptx"
+
 
 # Returns the current system time
 def currentTime():
@@ -25,8 +28,7 @@ def currentDate():
 # exitter() will take user prompt to exit out of python script
 def exitter():
     quitter = input("Press ENTER to quit")
-    if quitter:
-        sys.exit(1)
+    sys.exit(1)
 
 
 ORIGIN_PATH = askdirectory(title='Select your original folder')  # Shows dialog box and return the path
@@ -40,17 +42,18 @@ if Destination_PATH == "":
     print('You did not select the destination folder.\n'
           'Please quit and start the application, and do as instructed\n')
     exitter()
-    
+
 # Generate a filename based on current time and date
 origin = ORIGIN_PATH.split('/')
-filename = currentTime() + '-' + currentDate() + '.pptx'
+filename_raw = currentTime() + '-' + currentDate()
+filename = filename_raw + '.pptx'
 for item in origin:
     # Changed the filename based on origin folder if the origin is valid
     if item.startswith('INT'):
-        filename = item + ".pptx"
+        filename_raw = item
+        filename = filename_raw + ".pptx"
 
-savingPATH = os.path.join(Destination_PATH, filename)        
-
+savingPATH = os.path.join(Destination_PATH, filename)
 
 # Path to the folder that should contain "Output 20xxxxxx" folder
 OutputFolder = "Output 20xxxxxx"
@@ -61,7 +64,8 @@ imageName = "pre_6_l.png"
 imageFolder = "images"
 
 # Creating the Presentation object and setting the layout
-myPresentation = Presentation()
+myPresentation = Presentation(defaultPATH)
+myPresentation.slides[0].shapes.title.text = f'Image(s) from {filename_raw}'
 layout = myPresentation.slide_layouts[8]
 
 # Creating a path to the folder that contains "Scan" folders
@@ -71,7 +75,7 @@ myPath = os.path.join(ORIGIN_PATH, OutputFolder)
 if os.path.exists(myPath):
     directories = os.listdir(myPath)
 else:
-    print('Please select a directory that contains the folder "Output 20xxxxxx folder')
+    print('Please select a directory that contains the folder "Output 20xxxxxx" folder')
     exitter()
 
 # Slide counter
@@ -87,10 +91,12 @@ for directory in directories:
 
 # Saving the PowerPoint file and saving it
 if slide_count > 0:
-    print(f"{slide_count} image(s) added to the powerpoint presentation")
+    print(f"{slide_count} image(s) added to the powerpoint presentation\n")
     myPresentation.save(savingPATH)
 
     # Opening the PowerPoint file
     os.startfile(savingPATH)
 else:
-    print('No images to add')
+    print('No images to add\n')
+
+exitter()

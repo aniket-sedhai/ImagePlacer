@@ -3,3 +3,6 @@ venv/
 main.spec
 PowerPointGenerator.spec
 .idea/
+PowerPointGenerator_JPG.zip
+PowerPointGenerator_PNG.zip
+dist/
